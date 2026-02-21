@@ -1,0 +1,13 @@
+[general]
+import = ["themes/syri.toml"]
+
+[font]
+size = 10.0
+normal = { family = "Noto Sans Mono", style = "Regular" }
+bold = { family = "Noto Sans Mono", style = "Bold" }
+italic = { family = "Noto Sans Mono", style = "Italic" }
+[window]
+opacity = 1
+[colors.primary]
+background = "0x2c2c2c"
+foreground = "0xfffcfc"

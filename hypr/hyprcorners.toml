@@ -1,1 +1,13 @@
-/home/syrik2000/.config/hypr/hyprcorners.toml
+timeout = 50
+screen_width = 1920
+screen_height = 1080
+
+[bottom_right]
+radius = 10
+dispatcher = "workspace"
+args = "e+1"
+
+[bottom_left]
+radius = 10
+dispatcher = "workspace"
+args = "e-1"
