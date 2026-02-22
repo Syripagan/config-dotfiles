@@ -204,7 +204,6 @@ Item {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 menuContainer.logoutProcess.startDetached()
-                                Qt.quit()
                             }
                             hoverEnabled: true
                             onEntered: {

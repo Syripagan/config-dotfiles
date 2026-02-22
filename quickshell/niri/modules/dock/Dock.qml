@@ -12,42 +12,74 @@ Scope {
     readonly property string iconDir: "file:///home/syrik2000/.config/quickshell/icons/"
     Process { id: commandRunner }
 
+Process {
+        id: niriEvents
+        command: ["niri", "msg", "event-stream"]
+        running: true
+        stdout: SplitParser {
+            onRead: (line) => {
+                // Оновлюємо список лише коли щось реально сталось із вікнами чи фокусом
+                if (line.includes("Window") || line.includes("Workspace")) {
+                    niriLoader.run();
+                }
+            }
+        }
+    }
+
+    // 2. Разовий запит списку вікон
     Process {
         id: niriLoader
         command: ["niri", "msg", "-j", "windows"]
-        running: false
+        function run() { running = false; running = true; }
         
         stdout: SplitParser {
             onRead: (line) => {
                 try {
                     const windows = JSON.parse(line);
-                    if (JSON.stringify(windows) === dockScope.lastJson) return;
-                    dockScope.lastJson = JSON.stringify(windows);
-
-                    windowModel.clear();
-                    for (let win of windows) {
-                        windowModel.append({ 
-                            "appId": (win.app_id || "unknown"), 
-                            "winId": win.id,
-                            "isFocused": win.is_focused || false
-                        });
-                    }
+                    updateWindowModel(windows);
                 } catch (e) { }
             }
         }
     }
-    property string lastJson: ""
 
-    Timer {
-        interval: 100
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            niriLoader.running = false;
-            niriLoader.running = true;
+    // 3. Функція розумної синхронізації (виправляє дрижання)
+    function updateWindowModel(newWindows) {
+        newWindows.sort((a, b) => a.id - b.id);
+        // Видаляємо вікна, які закрилися
+        for (let i = windowModel.count - 1; i >= 0; i--) {
+            if (!newWindows.some(w => w.id === windowModel.get(i).winId)) {
+                windowModel.remove(i);
+            }
         }
+
+        // Додаємо нові або оновлюємо існуючі
+        newWindows.forEach((win, index) => {
+            let foundIdx = -1;
+            for (let i = 0; i < windowModel.count; i++) {
+                if (windowModel.get(i).winId === win.id) {
+                    foundIdx = i;
+                    break;
+                }
+            }
+
+            let winData = {
+                "appId": (win.app_id || "unknown"),
+                "winId": win.id,
+                "isFocused": win.is_focused || false
+            };
+
+            if (foundIdx !== -1) {
+                // Оновлюємо тільки властивість, об'єкт не перестворюється!
+                windowModel.setProperty(foundIdx, "isFocused", win.is_focused);
+                if (foundIdx !== index) windowModel.move(foundIdx, index, 1);
+            } else {
+                windowModel.insert(index, winData);
+            }
+        });
     }
+
+    // Завантажити вікна один раз при старті
+    Component.onCompleted: niriLoader.run()
     function getIcon(name) {
         return iconDir + name.toLowerCase() + ".svg";
     }
@@ -137,56 +169,56 @@ Scope {
                 Repeater {
                     model: windowModel
                     delegate: Rectangle {
-                        width: 44
-                        height: 44
-                        color: "transparent"
+                        width: 44; height: 44; color: "transparent"
+                        
+                        // Плавна анімація стану
                         y: mouseDetector.containsMouse ? -5 : 0
                         scale: mouseDetector.containsMouse ? 1.2 : 1
-                        Behavior on y {
-                            NumberAnimation {
-                                duration: 150; easing.type: Easing.OutCubic
-                            }
-                        }
-                        Behavior on scale {
-                            NumberAnimation {
-                                duration: 150; easing.type: Easing.OutCubic
-                            }
-                        }
+                        
+                        Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+
                         Image {
                             anchors.fill: parent
-                            anchors.margins: 0
-                            source: iconDir + appId + ".svg"
+                            // Робимо appId маленькими літерами для пошуку іконок
+                            source: iconDir + appId.toLowerCase() + ".svg"
                             fillMode: Image.PreserveAspectFit
-                            MouseArea {
-                                id: mouseDetector
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: (mouse) => {
-                                    if (mouse.button === Qt.LeftButton) {
-                                        commandRunner.command = ["niri", "msg", "action", "focus-window", "--id", winId.toString()];
-                                        commandRunner.running = true;
-                                    }   else if (mouse.button === Qt.RightButton) {
-                                        commandRunner.command = ["niri", "msg", "action", "close-window", "--id", winId.toString()];
-                                        commandRunner.running = true;
-                                    }
-                                }
-                            }
-                            onStatusChanged: {
-                                if (status === Image.Error) {
-                                    source = iconDir + "x-executable.svg"
-                                }
-                            }
+                            asynchronous: true
+                            sourceSize: Qt.size(64, 64) // Оптимізація SVG
+
+                            onStatusChanged: if (status === Image.Error) source = iconDir + "x-executable.svg"
                         }
+
+                        // Маленька крапка/лінія під активним вікном
                         Rectangle {
-                            width: 10
-                            height: 5
+                            width: isFocused ? 16 : 0
+                            height: 3
                             anchors.bottom: parent.bottom
+                            anchors.bottomMargin: -6
                             anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.bottomMargin: -5
-                            radius: 15
+                            radius: 2
                             color: "#bb2b2b"
+                            opacity: isFocused ? 1 : 0
+                            
+                            Behavior on width { NumberAnimation { duration: 200 } }
+                            Behavior on opacity { NumberAnimation { duration: 200 } }
+                        }
+
+                        MouseArea {
+                            id: mouseDetector
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: (mouse) => {
+                                if (mouse.button === Qt.LeftButton) {
+                                    commandRunner.command = ["niri", "msg", "action", "focus-window", "--id", winId.toString()];
+                                    commandRunner.running = true;
+                                } else if (mouse.button === Qt.RightButton) {
+                                    commandRunner.command = ["niri", "msg", "action", "close-window", "--id", winId.toString()];
+                                    commandRunner.running = true;
+                                }
+                            }
                         }
                     }
                 }
