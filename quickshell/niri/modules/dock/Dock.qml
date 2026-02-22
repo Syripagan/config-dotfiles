@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 
+// Це крутий док чуваки
 Scope {
     
     id: dockScope
@@ -18,15 +19,12 @@ Process {
         running: true
         stdout: SplitParser {
             onRead: (line) => {
-                // Оновлюємо список лише коли щось реально сталось із вікнами чи фокусом
                 if (line.includes("Window") || line.includes("Workspace")) {
                     niriLoader.run();
                 }
             }
         }
     }
-
-    // 2. Разовий запит списку вікон
     Process {
         id: niriLoader
         command: ["niri", "msg", "-j", "windows"]
@@ -41,18 +39,13 @@ Process {
             }
         }
     }
-
-    // 3. Функція розумної синхронізації (виправляє дрижання)
     function updateWindowModel(newWindows) {
         newWindows.sort((a, b) => a.id - b.id);
-        // Видаляємо вікна, які закрилися
         for (let i = windowModel.count - 1; i >= 0; i--) {
             if (!newWindows.some(w => w.id === windowModel.get(i).winId)) {
                 windowModel.remove(i);
             }
         }
-
-        // Додаємо нові або оновлюємо існуючі
         newWindows.forEach((win, index) => {
             let foundIdx = -1;
             for (let i = 0; i < windowModel.count; i++) {
@@ -69,7 +62,6 @@ Process {
             };
 
             if (foundIdx !== -1) {
-                // Оновлюємо тільки властивість, об'єкт не перестворюється!
                 windowModel.setProperty(foundIdx, "isFocused", win.is_focused);
                 if (foundIdx !== index) windowModel.move(foundIdx, index, 1);
             } else {
@@ -77,8 +69,6 @@ Process {
             }
         });
     }
-
-    // Завантажити вікна один раз при старті
     Component.onCompleted: niriLoader.run()
     function getIcon(name) {
         return iconDir + name.toLowerCase() + ".svg";
@@ -170,8 +160,6 @@ Process {
                     model: windowModel
                     delegate: Rectangle {
                         width: 44; height: 44; color: "transparent"
-                        
-                        // Плавна анімація стану
                         y: mouseDetector.containsMouse ? -5 : 0
                         scale: mouseDetector.containsMouse ? 1.2 : 1
                         
@@ -180,16 +168,13 @@ Process {
 
                         Image {
                             anchors.fill: parent
-                            // Робимо appId маленькими літерами для пошуку іконок
                             source: iconDir + appId.toLowerCase() + ".svg"
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
-                            sourceSize: Qt.size(64, 64) // Оптимізація SVG
+                            sourceSize: Qt.size(64, 64)
 
                             onStatusChanged: if (status === Image.Error) source = iconDir + "x-executable.svg"
                         }
-
-                        // Маленька крапка/лінія під активним вікном
                         Rectangle {
                             width: isFocused ? 16 : 0
                             height: 3
