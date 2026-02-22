@@ -152,7 +152,7 @@ Process {
 
                 // Сєпар
                 Rectangle {
-                    width: 4; height: 30; color: "#555"; radius: 10
+                    width: 4; height: 30; color: "#777"; radius: 10
                     anchors.verticalCenter: parent.verticalCenter
                     visible: windowModel.count > 0
                 }
@@ -174,21 +174,20 @@ Process {
                             sourceSize: Qt.size(64, 64)
 
                             onStatusChanged: if (status === Image.Error) source = iconDir + "x-executable.svg"
-                        }
-                        Rectangle {
-                            width: isFocused ? 16 : 0
-                            height: 3
+		    	}
+			Rectangle {
+			    width: 12
+                            height: 5
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: -6
                             anchors.horizontalCenter: parent.horizontalCenter
-                            radius: 2
-                            color: "#bb2b2b"
-                            opacity: isFocused ? 1 : 0
-                            
-                            Behavior on width { NumberAnimation { duration: 200 } }
-                            Behavior on opacity { NumberAnimation { duration: 200 } }
-                        }
-
+                            radius: 5
+			    color: isFocused ? "#cc2c2c" : "#8c8c8c"
+			    Behavior on color {
+			        ColorAnimation { duration: 100; }
+			    }
+			}
+			
                         MouseArea {
                             id: mouseDetector
                             anchors.fill: parent
