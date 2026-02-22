@@ -348,6 +348,7 @@ binds {
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
     Ctrl+Escape hotkey-overlay-title="Run a system monitor: btop" { spawn "~/syriscripts/btop.sh"; }
     Mod+B { spawn "blueman-manager"; }
+    Mod+Y hotkey-overlay-title="Open file manager: dolphin" { spawn "dolphin"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
