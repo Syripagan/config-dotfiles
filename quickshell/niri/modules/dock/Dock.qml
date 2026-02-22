@@ -120,6 +120,7 @@ Scope {
                         }
                         MouseArea {
                             id: mouseDetector
+                            cursorShape: Qt.PointingHandCursor
                             hoverEnabled: true
                             anchors.fill: parent
                             onClicked: launchApp(modelData)
@@ -161,6 +162,7 @@ Scope {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                cursorShape: Qt.PointingHandCursor
                                 onClicked: (mouse) => {
                                     if (mouse.button === Qt.LeftButton) {
                                         commandRunner.command = ["niri", "msg", "action", "focus-window", "--id", winId.toString()];

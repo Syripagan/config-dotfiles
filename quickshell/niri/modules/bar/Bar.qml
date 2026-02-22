@@ -117,6 +117,7 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 menuContainer.poweroffProcess.startDetached()
                                 Qt.quit()
@@ -158,6 +159,7 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 menuContainer.rebootProcess.startDetached()
                                 Qt.quit()
@@ -199,6 +201,7 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 menuContainer.logoutProcess.startDetached()
                                 Qt.quit()
@@ -240,6 +243,7 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 menuContainer.hyprlockProcess.startDetached()
                                 startMenu1.expanded = 0
