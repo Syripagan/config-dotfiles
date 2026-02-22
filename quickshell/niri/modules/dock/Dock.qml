@@ -174,19 +174,22 @@ Process {
                             sourceSize: Qt.size(64, 64)
 
                             onStatusChanged: if (status === Image.Error) source = iconDir + "x-executable.svg"
-		    	}
-			Rectangle {
-			    width: 12
-                            height: 5
+		    	        }
+                        Rectangle {
+                            width: isFocused ? 12 : height
+                            height: 6
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: -6
                             anchors.horizontalCenter: parent.horizontalCenter
                             radius: 5
-			    color: isFocused ? "#cc2c2c" : "#8c8c8c"
-			    Behavior on color {
-			        ColorAnimation { duration: 100; }
-			    }
-			}
+                            color: isFocused ? "#cc2c2c" : "#cccccc"
+                            Behavior on color {
+                                ColorAnimation { duration: 100; }
+                            }
+                            Behavior on width {
+                                NumberAnimation { duration: 100; }
+                            }
+			            }
 			
                         MouseArea {
                             id: mouseDetector
