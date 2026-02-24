@@ -21,8 +21,8 @@ ShellRoot {
         onErrorOccurred: function(error) { console.error("Niri error:", error) }
     }
     LazyLoader { active: true; component: Bar{} }
-    LazyLoader { active: true; component: Dock{} }
     LazyLoader { active: true; component: Frame{} }
+    LazyLoader { active: true; component: Dock{} }
     LazyLoader { active: true; component: Clock{} }
     LazyLoader { active: true; component: Volume{} }
     LazyLoader { active: true; component: Lock{} }

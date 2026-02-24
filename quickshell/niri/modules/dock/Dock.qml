@@ -4,7 +4,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 // Це крутий док чуваки
-Scope {
+Item {
     
     id: dockScope
 
@@ -13,7 +13,7 @@ Scope {
     readonly property string iconDir: "file:///home/syrik2000/.config/quickshell/icons/"
     Process { id: commandRunner }
 
-Process {
+    Process {
         id: niriEvents
         command: ["niri", "msg", "event-stream"]
         running: true
@@ -86,16 +86,17 @@ Process {
         proc.running = true;
     }
     PanelWindow {
+        exclusiveZone: implicitHeight - 5
         WlrLayershell.layer: WlrLayer.Bottom
         anchors { bottom: true; left: true; right: true }
         color: "#2c2c2c"        
         implicitWidth: layout.width + 24
-        implicitHeight: 64
+        implicitHeight: 70
         Rectangle {
             id: panelContent
             width: layout.width + 20
-            height: parent.height
-            anchors.bottom: parent.bottom
+            height: parent.height - 10
+            anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             color: "#3c3c3c"
             radius: 25
@@ -104,7 +105,7 @@ Process {
                 anchors.centerIn: parent
                 spacing: 8
                 Repeater {
-                    model: ["alacritty", "dolphin", "nix-software-center", "librewolf", "lutris", "steam", "AyuGram"]
+                    model: ["alacritty", "dolphin", "nix-software-center", "librewolf", "obs", "lutris", "steam", "AyuGram"]
                     
                     delegate: Rectangle {
                         width: 48; height: 48; color: "transparent"
@@ -114,8 +115,8 @@ Process {
                             source: getIcon(modelData)
                             fillMode: Image.PreserveAspectFit
                             visible: status === Image.Ready
-                            scale: mouseDetector.containsMouse ? 0.8 : 0.7
-                            y: mouseDetector.containsMouse ? -15 : -10
+                            scale: mouseDetector.containsMouse ? 0.85 : 0.7
+                            y: mouseDetector.containsMouse ? -13 : -10
 
                             // Анімка!~
                             Behavior on scale {
@@ -159,37 +160,46 @@ Process {
                 Repeater {
                     model: windowModel
                     delegate: Rectangle {
+                        Rectangle {
+                            width: 50
+                            height: width
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.verticalCenter: parent.verticalCenter
+                            radius: 25
+                            color: "#5c5c5c"
+                            scale: isFocused ? 1 : 0.75
+                            Behavior on scale {
+                                NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+                            }
+			            }
+                        Rectangle {
+                            width: isFocused ? 10 : 5
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.bottom
+                            height: 5
+                            anchors.bottomMargin: -6
+                            radius: 10
+                            Behavior on width {
+                                NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+                            }
+                        }
                         width: 44; height: 44; color: "transparent"
-                        y: mouseDetector.containsMouse ? -5 : 0
-                        scale: mouseDetector.containsMouse ? 1.2 : 1
-                        
-                        Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-                        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+
+                        visible: layout.width <= Screen.width
 
                         Image {
-                            anchors.fill: parent
-                            source: iconDir + appId.toLowerCase() + ".svg"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            source: iconDir + appId + ".svg"
                             fillMode: Image.PreserveAspectFit
                             asynchronous: true
                             sourceSize: Qt.size(64, 64)
 
                             onStatusChanged: if (status === Image.Error) source = iconDir + "x-executable.svg"
+                            y: mouseDetector.containsMouse ? -13 : -10
+                            scale: mouseDetector.containsMouse ? 0.85 : 0.7
+                            Behavior on y { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+                            Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
 		    	        }
-                        Rectangle {
-                            width: isFocused ? 12 : height
-                            height: 6
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: -6
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            radius: 5
-                            color: isFocused ? "#cc2c2c" : "#cccccc"
-                            Behavior on color {
-                                ColorAnimation { duration: 100; }
-                            }
-                            Behavior on width {
-                                NumberAnimation { duration: 100; }
-                            }
-			            }
 			
                         MouseArea {
                             id: mouseDetector

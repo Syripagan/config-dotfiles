@@ -69,7 +69,7 @@ input {
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Outputs
 // Remember to uncomment the node by removing "/-"!
-output "DP-3" {
+output "DP-1" {
     // Uncomment this line to disable this output.
     // off
 
@@ -80,6 +80,7 @@ output "DP-3" {
     // If the mode is omitted altogether or is invalid, niri will pick one automatically.
     // Run `niri msg outputs` while inside a niri instance to list all outputs and their modes.
     mode "2560x1440@164.998"
+    // mode "1920x1080"
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
     scale 1
@@ -256,6 +257,13 @@ layout {
 // spawn-at-startup "waybar"
 spawn-at-startup "~/syriscripts/quickshell-niri.sh"
 spawn-at-startup "hyprpaper"
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=Hyprland"
+spawn-at-startup "mako"
+
+// Портали
+spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-hyprland"
+spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-gtk"
+spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-wlr"
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
@@ -295,7 +303,11 @@ window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     default-column-width {}
 }
-
+// для флочки
+window-rule {
+    match app-id="labwc"
+    open-maximized-to-edges true
+}
 // Open the Firefox picture-in-picture player as floating by default.
 window-rule {
     // This app-id regular expression will work for both:
@@ -323,7 +335,10 @@ window-rule {
     geometry-corner-radius 23
     clip-to-geometry true
 }
-
+cursor {
+	xcursor-theme "Bibata-Original-Classic"
+	xcursor-size 24
+}
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
     // in the end. To find an XKB name for a particular key, you may use a program
@@ -346,10 +361,11 @@ binds {
     Mod+R hotkey-overlay-title="Run rofi application launcher" { spawn "~/syriscripts/rofi.sh"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
-    Ctrl+Escape hotkey-overlay-title="Run a system monitor: btop" { spawn "~/syriscripts/btop.sh"; }
-    Mod+B { spawn "blueman-manager"; }
+    Ctrl+Escape hotkey-overlay-title="Run a system monitor: btop" { spawn "alacritty" "-e" "btop"; }
+    Mod+B { spawn "alacritty" "-e" "bluetui"; }
     Mod+Y hotkey-overlay-title="Open file manager: dolphin" { spawn "dolphin"; }
-
+    Mod+P { spawn "pulsemeeter"; }
+    Mod+M { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
     // Mod+T { spawn "bash" "-c" "notify-send hello && exec alacritty"; }
@@ -518,7 +534,7 @@ binds {
     // Expel the bottom window from the focused column to the right.
     Mod+Period { expel-window-from-column; }
 
-    Mod+Shift+R { switch-preset-column-width; }
+    Mod+Shift+R { set-column-width "50%"; }
     // Mod+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R { reset-window-height; }
     Mod+F { fullscreen-window; }
@@ -555,7 +571,7 @@ binds {
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
     // rather than stacked on top of each other.
-    Mod+W { toggle-column-tabbed-display; }
+    // Mod+W { toggle-column-tabbed-display; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have

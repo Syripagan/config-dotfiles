@@ -15,18 +15,37 @@ Item {
         }
     }
     PanelWindow {
+        exclusiveZone: 0
         id: startMenu1
         color: "transparent"
-        width: Screen.width
-        height: 0.9965 * Screen.height
+        width: 430
         anchors {
-            left: parent
-            right: parent
-            top: parent
-            bottom: parent
+            left: true
+            top: true
+            bottom: true
+        }
+        Timer {
+            id: closeDelay
+            interval: 100 
+            onTriggered: {
+                startMenu1.expanded = !startMenu1.expanded
+                menuRect.opacity = 1
+            }
         }
         property bool expanded: false
-        visible: startMenu1.expanded
+        visible: expanded
+
+        MouseArea {
+            id: mainMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            onExited: {
+                closeDelay.start()
+                menuRect.width = 0 * Screen.height
+                menuRect.height = 0.310 * Screen.height
+                menuRect.opacity = 0
+            }
+        }
         Item {
             id: menuContainer
             property var rebootProcess: Process {
@@ -45,40 +64,33 @@ Item {
             height: parent.height
             Rectangle {
                 id: blg
-                anchors.fill: parent
-                anchors.leftMargin: 3
-                anchors.rightMargin: 3
-                anchors.bottomMargin: 2
-                anchors.topMargin: 2
-		        y: 0 
-                color: "#000000"
-                opacity: 0.4
+                anchors.left: parent.left
+		        y: 0
+                color: "transparent"
                 radius: 30
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        startMenu1.expanded = false
-                    }
-                }
             }
             Rectangle {
                 id: menuRect
-                height: 0.916 * Screen.height
-                width: 0.1171875 * Screen.width
-                property var formr: (-0.0225)*Screen.width
-                x: startMenu1.expanded ? (0.003 * Screen.width) : formr
-                y: 0.005 * Screen.height
+                height: startMenu1.expanded ? 0.710 * Screen.height : 0.310 * Screen.height
+                width: startMenu1.expanded ? 0.1671875 * Screen.width : 0
+                property var formr: (-0.0025)*Screen.width
+                // x: startMenu1.expanded ? (0.0045 * Screen.width) : formr
+                x: formr
+                z: 1
+                anchors.verticalCenter: parent.verticalCenter
+                y: 0.007 * Screen.height
                 radius: 25
                 color: "#2c2c2c"
                 opacity: startMenu1.expanded ? 1 : 0
-
-                Behavior on x {
-                    NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+                Behavior on height {
+                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                }
+                Behavior on width {
+                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
                 }
                 Behavior on opacity {
-                    NumberAnimation { duration: 100; easing.type: Easing.InOutQuad }
+                    NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
                 }
-
                 Column {
                     anchors.fill: parent
                     anchors.margins: 20
@@ -122,10 +134,11 @@ Item {
                                 menuContainer.poweroffProcess.startDetached()
                                 Qt.quit()
                             }
-                            hoverEnabled: true
+                            hoverEnabled: false
                             onEntered: {
                                 pob.color = "#aa1b1b"
                                 pob.radius = 5
+                                startMenu1.closeDelay.stop()
                             }
                             onExited: {
                                 pob.color = "#3c3c3c"
@@ -164,7 +177,7 @@ Item {
                                 menuContainer.rebootProcess.startDetached()
                                 Qt.quit()
                             }
-                            hoverEnabled: true
+                            hoverEnabled: false
                             onEntered: {
                                 rebb.color = "#aa1b1b"
                                 rebb.radius = 5
@@ -205,7 +218,7 @@ Item {
                             onClicked: {
                                 menuContainer.logoutProcess.startDetached()
                             }
-                            hoverEnabled: true
+                            hoverEnabled: false
                             onEntered: {
                                 lob.color = "#aa1b1b"
                                 lob.radius = 5
@@ -247,7 +260,7 @@ Item {
                                 menuContainer.hyprlockProcess.startDetached()
                                 startMenu1.expanded = 0
                             }
-                            hoverEnabled: true
+                            hoverEnabled: false
                             onEntered: {
                                 hlb.color = "#aa1b1b"
                                 hlb.radius = 5
@@ -339,7 +352,11 @@ Item {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        startMenu1.expanded = !startMenu1.expanded
+                        // startMenu1.expanded = !startMenu1.expanded
+                        closeDelay.start()
+                        menuRect.width = 0 * Screen.height
+                        menuRect.height = 0.310 * Screen.height
+                        menuRect.opacity = 0
                     }
                     onEntered: {
                         startMenu.color = "#aa1b1b" 
@@ -488,7 +505,7 @@ Item {
                         height: 0.01484375 * Screen.height
                         radius: hovered ? 5 : 40
                         color: model.isActive ? "#aa1b1b" : '#3c3c3c'
-                        visible: index < 100
+                        visible: index < 10
                         Behavior on color {
                             ColorAnimation { duration: 200; easing.type: Easing.InOutQuad }
                         }
