@@ -105,7 +105,7 @@ Item {
                 anchors.centerIn: parent
                 spacing: 8
                 Repeater {
-                    model: ["alacritty", "dolphin", "nix-software-center", "librewolf", "obs", "lutris", "steam", "AyuGram"]
+                    model: ["alacritty", "nautilus", "nix-software-center", "librewolf", "obs", "lutris", "qbittorrent", "steam", "AyuGram"]
                     
                     delegate: Rectangle {
                         width: 48; height: 48; color: "transparent"

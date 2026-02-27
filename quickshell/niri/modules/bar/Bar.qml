@@ -83,13 +83,13 @@ Item {
                 color: "#2c2c2c"
                 opacity: startMenu1.expanded ? 1 : 0
                 Behavior on height {
-                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    NumberAnimation { duration: 400; easing.type: Easing.OutCubic }
                 }
                 Behavior on width {
-                    NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+                    NumberAnimation { duration: 400; easing.type: Easing.OutCubic }
                 }
                 Behavior on opacity {
-                    NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                    NumberAnimation { duration: 100; easing.type: Easing.InOutQuad }
                 }
                 Column {
                     anchors.fill: parent

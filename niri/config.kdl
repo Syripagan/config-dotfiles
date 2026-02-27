@@ -261,7 +261,7 @@ spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPL
 spawn-at-startup "mako"
 
 // Портали
-spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-hyprland"
+// spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-hyprland"
 spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-gtk"
 spawn-at-startup "/run/current-system/sw/libexec/xdg-desktop-portal-wlr"
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
@@ -329,8 +329,7 @@ window-rule {
     // block-out-from "screencast"
 }
 
-// Example: enable rounded corners for all windows.
-// (This example rule is commented out with a "/-" in front.)
+    // кругляши 
 window-rule {
     geometry-corner-radius 23
     clip-to-geometry true
@@ -362,10 +361,10 @@ binds {
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
     Ctrl+Escape hotkey-overlay-title="Run a system monitor: btop" { spawn "alacritty" "-e" "btop"; }
-    Mod+B { spawn "alacritty" "-e" "bluetui"; }
-    Mod+Y hotkey-overlay-title="Open file manager: dolphin" { spawn "dolphin"; }
+    Mod+B hotkey-overlay-title="Spawn bluetui in alacritty" { spawn "alacritty" "-e" "bluetui"; }
+    Mod+Y hotkey-overlay-title="Open file manager: nautilus" { spawn "nautilus"; }
     Mod+P { spawn "pulsemeeter"; }
-    Mod+M { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    Mod+M hotkey-overlay-title="mute" { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
     // Mod+T { spawn "bash" "-c" "notify-send hello && exec alacritty"; }
